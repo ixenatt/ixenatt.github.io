@@ -437,29 +437,21 @@ const tbody =
 const resultCount =
     document.getElementById("resultCount");
 
-let debounceTimer = null;
+const container =
+    document.querySelector(".container");
 
-searchInput.addEventListener("input", function(){
+const tableCard =
+    document.querySelector(".table-card");
 
-    clearTimeout(debounceTimer);
+searchInput.addEventListener("input", function () {
 
-    debounceTimer = setTimeout(() => {
-
-        doSearch(this.value.trim());
-
-    }, 100);
+    doSearch(this.value.trim());
 
 });
 
 function doSearch(keyword){
 
     tbody.innerHTML = "";
-
-    const container =
-        document.querySelector(".container");
-
-    const tableCard =
-        document.querySelector(".table-card");
 
     if(keyword === ""){
 
@@ -487,7 +479,7 @@ function doSearch(keyword){
 
     const maxResult = 100;
 
-    for(let i=0; i<countries.length; i++){
+    for(let i = 0; i < countries.length; i++){
 
         const row = countries[i];
 
@@ -497,6 +489,7 @@ function doSearch(keyword){
 
         const text = (
             row[0] + "|" +
+            row[1] + "|" +
             row[2]
         ).toLowerCase();
 
@@ -518,11 +511,9 @@ function doSearch(keyword){
 
 function renderTable(results, keyword){
 
-    tbody.innerHTML = "";
-
     let html = "";
 
-    for(let i=0; i<results.length; i++){
+    for(let i = 0; i < results.length; i++){
 
         const row = results[i];
 
@@ -547,11 +538,20 @@ function highlight(text, keyword){
     if(keyword === "") return text;
 
     const regex =
-        new RegExp("(" + keyword + ")", "gi");
+        new RegExp("(" + escapeRegExp(keyword) + ")", "gi");
 
     return text.replace(
         regex,
         '<span class="highlight">$1</span>'
+    );
+
+}
+
+function escapeRegExp(text){
+
+    return text.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&'
     );
 
 }
@@ -565,12 +565,6 @@ document.addEventListener("keydown", function(e){
         tbody.innerHTML = "";
 
         resultCount.innerHTML = "";
-
-        const container =
-            document.querySelector(".container");
-
-        const tableCard =
-            document.querySelector(".table-card");
 
         tableCard.style.display = "none";
 
